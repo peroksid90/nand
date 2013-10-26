@@ -1,13 +1,4 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
+*.cmp
+*.out
+*.tst
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
