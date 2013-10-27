@@ -10,8 +10,8 @@
 
 CHIP And {
     IN a, b;
-    OUT out1;
+    OUT out;
 PARTS:
 Nand(a = a, b = b, out = y);
-Not(in = y, out1 = out);
+Not(in = y, out = out);
 }

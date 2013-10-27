@@ -12,5 +12,56 @@ CHIP And16 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+Nand(a = a[0], b = b[0], out = y0);
+Not(in = y0, out = out[0]);
+
+
+Nand(a = a[1], b = b[1], out = y1);
+Not(in = y1, out = out[1]);
+
+
+Nand(a = a[2], b = b[2], out = y2);
+Not(in = y2, out = out[2]);
+
+
+Nand(a = a[3], b = b[3], out = y3);
+Not(in = y3, out = out[3]);
+
+Nand(a = a[4], b = b[4], out = y4);
+Not(in = y4, out = out[4]);
+
+Nand(a = a[5], b = b[5], out = y5);
+Not(in = y5, out = out[5]);
+
+Nand(a = a[6], b = b[6], out = y6);
+Not(in = y6, out = out[6]);
+
+Nand(a = a[7], b = b[7], out = y7);
+Not(in = y7, out = out[7]);
+
+Nand(a = a[8], b = b[8], out = y8);
+Not(in = y8, out = out[8]);
+
+Nand(a = a[9], b = b[9], out = y9);
+Not(in = y9, out = out[9]);
+
+Nand(a = a[10], b = b[10], out = y10);
+Not(in = y10, out = out[10]);
+
+Nand(a = a[11], b = b[11], out = y11);
+Not(in = y11, out = out[11]);
+
+Nand(a = a[12], b = b[12], out = y12);
+Not(in = y12, out = out[12]);
+
+Nand(a = a[13], b = b[13], out = y13);
+Not(in = y13, out = out[13]);
+
+Nand(a = a[14], b = b[14], out = y14);
+Not(in = y14, out = out[14]);
+
+Nand(a = a[15], b = b[15], out = y15);
+Not(in = y15, out = out[15]);
+
 }
+

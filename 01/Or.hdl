@@ -10,7 +10,10 @@
 CHIP Or {
     IN a, b;
     OUT out;
-
     PARTS:
-    // Put your code here:
+Not(in = a, out = notA);
+Not(in = b, out = notB);
+And(a=notA, b=notB, out = y);
+Not(in=y, out = out);
+
 }

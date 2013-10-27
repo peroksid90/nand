@@ -12,6 +12,441 @@ CHIP Mux16 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+// 0,A 
+Not(in=a[0], out = notAA);
+And(a=notAA, b=b[0], out = forSel1A);
+And(a=forSel1A, b = sel, out = bloc1A);
+
+Not(in=b[0], out = notBA);
+Not(in=sel, out = notSelA);
+And(a=a[0], b=notBA, out = forSel2A);
+And(a=forSel2A, b = notSelA, out = bloc2A);
+
+Or(a=bloc1A, b=bloc2A, out = firstOrA);
+
+
+Not(in=sel, out = notSel2A);
+And(a=a[0], b=b[0], out = forSel3A);
+And(a=forSel3A, b=notSel2A, out = bloc3A);
+
+And(a=a[0],b=b[0], out = forSel4A);
+And(a=forSel4A, b=sel, out = bloc4A);
+
+Or(a=bloc3A, b=bloc4A, out = secondOrA);
+
+Or(a=firstOrA, b=secondOrA, out=out[0]);
+
+// 1, B 
+
+Not(in=a[1], out = notAB);
+And(a=notAB, b=b[1], out = forSel1B);
+And(a=forSel1B, b = sel, out = bloc1B);
+
+Not(in=b[1], out = notBB);
+Not(in=sel, out = notSelB);
+And(a=a[1], b=notBB, out = forSel2B);
+And(a=forSel2B, b = notSelB, out = bloc2B);
+
+Or(a=bloc1B, b=bloc2B, out = firstOrB);
+
+
+Not(in=sel, out = notSel2B);
+And(a=a[1], b=b[1], out = forSel3B);
+And(a=forSel3B, b=notSel2B, out = bloc3B);
+
+And(a=a[1],b=b[1], out = forSel4B);
+And(a=forSel4B, b=sel, out = bloc4B);
+
+Or(a=bloc3B, b=bloc4B, out = secondOrB);
+
+Or(a=firstOrB, b=secondOrB, out=out[1]);
+
+
+
+// 2, C 
+
+Not(in=a[2], out = notAC);
+And(a=notAC, b=b[2], out = forSel1C);
+And(a=forSel1C, b = sel, out = bloc1C);
+
+Not(in=b[2], out = notBC);
+Not(in=sel, out = notSelC);
+And(a=a[2], b=notBC, out = forSel2C);
+And(a=forSel2C, b = notSelC, out = bloc2C);
+
+Or(a=bloc1C, b=bloc2C, out = firstOrC);
+
+
+Not(in=sel, out = notSel2C);
+And(a=a[2], b=b[2], out = forSel3C);
+And(a=forSel3C, b=notSel2C, out = bloc3C);
+
+And(a=a[2],b=b[2], out = forSel4C);
+And(a=forSel4C, b=sel, out = bloc4C);
+
+Or(a=bloc3C, b=bloc4C, out = secondOrC);
+
+Or(a=firstOrC, b=secondOrC, out=out[2]);
+
+
+
+//3, D 
+
+Not(in=a[3], out = notAD);
+And(a=notAD, b=b[3], out = forSel1D);
+And(a=forSel1D, b = sel, out = bloc1D);
+
+Not(in=b[3], out = notBD);
+Not(in=sel, out = notSelD);
+And(a=a[3], b=notBD, out = forSel2D);
+And(a=forSel2D, b = notSelD, out = bloc2D);
+
+Or(a=bloc1D, b=bloc2D, out = firstOrD);
+
+
+Not(in=sel, out = notSel2D);
+And(a=a[3], b=b[3], out = forSel3D);
+And(a=forSel3D, b=notSel2D, out = bloc3D);
+
+And(a=a[3],b=b[3], out = forSel4D);
+And(a=forSel4D, b=sel, out = bloc4D);
+
+Or(a=bloc3D, b=bloc4D, out = secondOrD);
+
+Or(a=firstOrD, b=secondOrD, out=out[3]);
+
+
+
+//4, E 
+
+Not(in=a[4], out = notAE);
+And(a=notAE, b=b[4], out = forSel1E);
+And(a=forSel1E, b = sel, out = bloc1E);
+
+Not(in=b[4], out = notBE);
+Not(in=sel, out = notSelE);
+And(a=a[4], b=notBE, out = forSel2E);
+And(a=forSel2E, b = notSelE, out = bloc2E);
+
+Or(a=bloc1E, b=bloc2E, out = firstOrE);
+
+
+Not(in=sel, out = notSel2E);
+And(a=a[4], b=b[4], out = forSel3E);
+And(a=forSel3E, b=notSel2E, out = bloc3E);
+
+And(a=a[4],b=b[4], out = forSel4E);
+And(a=forSel4E, b=sel, out = bloc4E);
+
+Or(a=bloc3E, b=bloc4E, out = secondOrE);
+
+Or(a=firstOrE, b=secondOrE, out=out[4]);
+
+
+
+//5, F 
+
+
+Not(in=a[5], out = notAF);
+And(a=notAF, b=b[5], out = forSel1F);
+And(a=forSel1F, b = sel, out = bloc1F);
+
+Not(in=b[5], out = notBF);
+Not(in=sel, out = notSelF);
+And(a=a[5], b=notBF, out = forSel2F);
+And(a=forSel2F, b = notSelF, out = bloc2F);
+
+Or(a=bloc1F, b=bloc2F, out = firstOrF);
+
+
+Not(in=sel, out = notSel2F);
+And(a=a[5], b=b[5], out = forSel3F);
+And(a=forSel3F, b=notSel2F, out = bloc3F);
+
+And(a=a[5],b=b[5], out = forSel4F);
+And(a=forSel4F, b=sel, out = bloc4F);
+
+Or(a=bloc3F, b=bloc4F, out = secondOrF);
+
+Or(a=firstOrF, b=secondOrF, out=out[5]);
+
+
+
+//6, G 
+
+
+Not(in=a[6], out = notAG);
+And(a=notAG, b=b[6], out = forSel1G);
+And(a=forSel1G, b = sel, out = bloc1G);
+
+Not(in=b[6], out = notBG);
+Not(in=sel, out = notSelG);
+And(a=a[6], b=notBG, out = forSel2G);
+And(a=forSel2G, b = notSelG, out = bloc2G);
+
+Or(a=bloc1G, b=bloc2G, out = firstOrG);
+
+
+Not(in=sel, out = notSel2G);
+And(a=a[6], b=b[6], out = forSel3G);
+And(a=forSel3G, b=notSel2G, out = bloc3G);
+
+And(a=a[6],b=b[6], out = forSel4G);
+And(a=forSel4G, b=sel, out = bloc4G);
+
+Or(a=bloc3G, b=bloc4G, out = secondOrG);
+
+Or(a=firstOrG, b=secondOrG, out=out[6]);
+
+
+
+//7, H
+
+
+Not(in=a[7], out = notAH);
+And(a=notAH, b=b[7], out = forSel1H);
+And(a=forSel1H, b = sel, out = bloc1H);
+
+Not(in=b[7], out = notBH);
+Not(in=sel, out = notSelH);
+And(a=a[7], b=notBH, out = forSel2H);
+And(a=forSel2H, b = notSelH, out = bloc2H);
+
+Or(a=bloc1H, b=bloc2H, out = firstOrH);
+
+
+Not(in=sel, out = notSel2H);
+And(a=a[7], b=b[7], out = forSel3H);
+And(a=forSel3H, b=notSel2H, out = bloc3H);
+
+And(a=a[7],b=b[7], out = forSel4H);
+And(a=forSel4H, b=sel, out = bloc4H);
+
+Or(a=bloc3H, b=bloc4H, out = secondOrH);
+
+Or(a=firstOrH, b=secondOrH, out=out[7]);
+
+
+
+
+//8, I 
+
+
+Not(in=a[8], out = notAI);
+And(a=notAI, b=b[8], out = forSel1I);
+And(a=forSel1I, b = sel, out = bloc1I);
+
+Not(in=b[8], out = notBI);
+Not(in=sel, out = notSelI);
+And(a=a[8], b=notBI, out = forSel2I);
+And(a=forSel2I, b = notSelI, out = bloc2I);
+
+Or(a=bloc1I, b=bloc2I, out = firstOrI);
+
+
+Not(in=sel, out = notSel2I);
+And(a=a[8], b=b[8], out = forSel3I);
+And(a=forSel3I, b=notSel2I, out = bloc3I);
+
+And(a=a[8],b=b[8], out = forSel4I);
+And(a=forSel4I, b=sel, out = bloc4I);
+
+Or(a=bloc3I, b=bloc4I, out = secondOrI);
+
+Or(a=firstOrI, b=secondOrI, out=out[8]);
+
+
+
+//9, J 
+
+Not(in=a[9], out = notAJ);
+And(a=notAJ, b=b[9], out = forSel1J);
+And(a=forSel1J, b = sel, out = bloc1J);
+
+Not(in=b[9], out = notBJ);
+Not(in=sel, out = notSelJ);
+And(a=a[9], b=notBJ, out = forSel2J);
+And(a=forSel2J, b = notSelJ, out = bloc2J);
+
+Or(a=bloc1J, b=bloc2J, out = firstOrJ);
+
+
+Not(in=sel, out = notSel2J);
+And(a=a[9], b=b[9], out = forSel3J);
+And(a=forSel3J, b=notSel2J, out = bloc3J);
+
+And(a=a[9],b=b[9], out = forSel4J);
+And(a=forSel4J, b=sel, out = bloc4J);
+
+Or(a=bloc3J, b=bloc4J, out = secondOrJ);
+
+Or(a=firstOrJ, b=secondOrJ, out=out[9]);
+
+
+
+
+
+//10, K 
+
+Not(in=a[10], out = notAK);
+And(a=notAK, b=b[10], out = forSel1K);
+And(a=forSel1K, b = sel, out = bloc1K);
+
+Not(in=b[10], out = notBK);
+Not(in=sel, out = notSelK);
+And(a=a[10], b=notBK, out = forSel2K);
+And(a=forSel2K, b = notSelK, out = bloc2K);
+
+Or(a=bloc1K, b=bloc2K, out = firstOrK);
+
+
+Not(in=sel, out = notSel2K);
+And(a=a[10], b=b[10], out = forSel3K);
+And(a=forSel3K, b=notSel2K, out = bloc3K);
+
+And(a=a[10],b=b[10], out = forSel4K);
+And(a=forSel4K, b=sel, out = bloc4K);
+
+Or(a=bloc3K, b=bloc4K, out = secondOrK);
+
+Or(a=firstOrK, b=secondOrK, out=out[10]);
+
+
+
+
+//11, L 
+
+
+Not(in=a[11], out = notAL);
+And(a=notAL, b=b[11], out = forSel1L);
+And(a=forSel1L, b = sel, out = bloc1L);
+
+Not(in=b[11], out = notBL);
+Not(in=sel, out = notSelL);
+And(a=a[11], b=notBL, out = forSel2L);
+And(a=forSel2L, b = notSelL, out = bloc2L);
+
+Or(a=bloc1L, b=bloc2L, out = firstOrL);
+
+
+Not(in=sel, out = notSel2L);
+And(a=a[11], b=b[11], out = forSel3L);
+And(a=forSel3L, b=notSel2L, out = bloc3L);
+
+And(a=a[11],b=b[11], out = forSel4L);
+And(a=forSel4L, b=sel, out = bloc4L);
+
+Or(a=bloc3L, b=bloc4L, out = secondOrL);
+
+Or(a=firstOrL, b=secondOrL, out=out[11]);
+
+
+//12, M 
+
+Not(in=a[12], out = notAM);
+And(a=notAM, b=b[12], out = forSel1M);
+And(a=forSel1M, b = sel, out = bloc1M);
+
+Not(in=b[12], out = notBM);
+Not(in=sel, out = notSelM);
+And(a=a[12], b=notBM, out = forSel2M);
+And(a=forSel2M, b = notSelM, out = bloc2M);
+
+Or(a=bloc1M, b=bloc2M, out = firstOrM);
+
+
+Not(in=sel, out = notSel2M);
+And(a=a[12], b=b[12], out = forSel3M);
+And(a=forSel3M, b=notSel2M, out = bloc3M);
+
+And(a=a[12],b=b[12], out = forSel4M);
+And(a=forSel4M, b=sel, out = bloc4M);
+
+Or(a=bloc3M, b=bloc4M, out = secondOrM);
+
+Or(a=firstOrM, b=secondOrM, out=out[12]);
+
+
+
+
+
+//13, N
+
+Not(in=a[13], out = notAN);
+And(a=notAN, b=b[13], out = forSel1N);
+And(a=forSel1N, b = sel, out = bloc1N);
+
+Not(in=b[13], out = notBN);
+Not(in=sel, out = notSelN);
+And(a=a[13], b=notBN, out = forSel2N);
+And(a=forSel2N, b = notSelN, out = bloc2N);
+
+Or(a=bloc1N, b=bloc2N, out = firstOrN);
+
+
+Not(in=sel, out = notSel2N);
+And(a=a[13], b=b[13], out = forSel3N);
+And(a=forSel3N, b=notSel2N, out = bloc3N);
+
+And(a=a[13],b=b[13], out = forSel4N);
+And(a=forSel4N, b=sel, out = bloc4N);
+
+Or(a=bloc3N, b=bloc4N, out = secondOrN);
+
+Or(a=firstOrN, b=secondOrN, out=out[13]);
+
+
+//14, O
+
+Not(in=a[14], out = notAO);
+And(a=notAO, b=b[14], out = forSel1O);
+And(a=forSel1O, b = sel, out = bloc1O);
+
+Not(in=b[14], out = notBO);
+Not(in=sel, out = notSelO);
+And(a=a[14], b=notBO, out = forSel2O);
+And(a=forSel2O, b = notSelO, out = bloc2O);
+
+Or(a=bloc1O, b=bloc2O, out = firstOrO);
+
+
+Not(in=sel, out = notSel2O);
+And(a=a[14], b=b[14], out = forSel3O);
+And(a=forSel3O, b=notSel2O, out = bloc3O);
+
+And(a=a[14],b=b[14], out = forSel4O);
+And(a=forSel4O, b=sel, out = bloc4O);
+
+Or(a=bloc3O, b=bloc4O, out = secondOrO);
+
+Or(a=firstOrO, b=secondOrO, out=out[14]);
+
+
+
+//15, P 
+
+Not(in=a[15], out = notAP);
+And(a=notAP, b=b[15], out = forSel1P);
+And(a=forSel1P, b = sel, out = bloc1P);
+
+Not(in=b[15], out = notBP);
+Not(in=sel, out = notSelP);
+And(a=a[15], b=notBP, out = forSel2P);
+And(a=forSel2P, b = notSelP, out = bloc2P);
+
+Or(a=bloc1P, b=bloc2P, out = firstOrP);
+
+
+Not(in=sel, out = notSel2P);
+And(a=a[15], b=b[15], out = forSel3P);
+And(a=forSel3P, b=notSel2P, out = bloc3P);
+
+And(a=a[15],b=b[15], out = forSel4P);
+And(a=forSel4P, b=sel, out = bloc4P);
+
+Or(a=bloc3P, b=bloc4P, out = secondOrP);
+
+Or(a=firstOrP, b=secondOrP, out=out[15]);
+
 }
 
