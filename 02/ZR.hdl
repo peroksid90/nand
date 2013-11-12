@@ -1,0 +1,14 @@
+CHIP ZR {
+IN
+  c[16];
+
+OUT
+  out;
+
+PARTS:
+Or8Way(in = c[0..7], out = out1);
+Or8Way(in = c[8..15], out = out2);
+
+Or(a = out1, b = out2, out = outOr);
+Not(in = outOr, out = out);
+}

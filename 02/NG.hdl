@@ -1,0 +1,10 @@
+CHIP NG {
+IN
+   c[16];
+
+OUT
+  out;
+
+PARTS:
+ And(a = c[15], b = true, out = out);
+}

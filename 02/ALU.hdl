@@ -28,7 +28,7 @@
 // if (out==0) set zr = 1
 // if (out<0) set ng = 1
 
-  
+ 
 CHIP ALU {
     IN  
         x[16], y[16],  // 16-bit inputs        
@@ -45,5 +45,24 @@ CHIP ALU {
         ng; // 1 if (out<0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+
+
+Zeroed(trigger = zx, c = x, out = outZeroedX);
+Negated(trigger = nx, c = outZeroedX, out = outNegatedX); 
+
+Zeroed(trigger = zy, c = y, out = outZeroedY);
+Negated(trigger = ny, c = outZeroedY, out = outNegatedY);
+
+Func(x = outNegatedX, y = outNegatedY, trigger = f, out = outF);
+
+
+//OUT[16]
+Negated(trigger = no, c = outF, out = outFinale, out = out);
+
+//NG
+NG(c = outFinale, out = ng);
+
+//ZR
+ZR(c = outFinale, out = zr); 
+
 }

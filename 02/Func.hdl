@@ -1,0 +1,14 @@
+CHIP Func {
+IN
+   trigger, x[16], y[16];
+
+OUT
+  out[16];
+
+PARTS:
+
+Add16(a = x, b = y, out = add);
+And16(a = x, b = y, out = and);
+
+Mux16(a = and, b = add, sel = trigger, out = out);
+}
