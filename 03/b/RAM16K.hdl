@@ -1,6 +1,6 @@
 // This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
+// and the booK "The Elements of Computing Systems"
+// by Nisan and SchocKen, MIT Press.
 // File name: projects/03/b/RAM16K.hdl
 
 /**
@@ -11,9 +11,26 @@
  */
 
 CHIP RAM16K {
-    IN in[16], load, address[14];
+    IN in[16], load, address[15];
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    RAM4K(in = ram0, load = load0, address = address[0..11], out = outRam0);
+    RAM4K(in = ram1, load = load1, address = address[0..11], out = outRam1);
+    RAM4K(in = ram2, load = load2, address = address[0..11], out = outRam2);
+    RAM4K(in = ram3, load = load3, address = address[0..11], out = outRam3);
+    RAM4K(in = ram4, load = load4, address = address[0..11], out = outRam4);
+    RAM4K(in = ram5, load = load5, address = address[0..11], out = outRam5);
+    RAM4K(in = ram6, load = load6, address = address[0..11], out = outRam6);
+    RAM4K(in = ram7, load = load7, address = address[0..11], out = outRam7);
+
+   DMux8Way(in = load, sel = address[12..14], a = load0, b = load1, c = load2, d = load3,
+                                            e = load4, f = load5, g = load6, h = load7);
+
+   DMux8Way16(in = in, sel = address[12..14], a = ram0, b = ram1, c = ram2, d = ram3,
+                                            e = ram4, f = ram5, g = ram6, h = ram7);
+
+   Mux8Way16(a = outRam0, b = outRam1, c = outRam2, d = outRam3, e = outRam4, f = outRam5,
+             g = outRam6, h = outRam7, sel = address[12..14], out = out);
+
 }
