@@ -1,0 +1,116 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Central Processing unit (CPU).
+ * Consists of an ALU and a set of registers, designed to fetch and 
+ * execute instructions written in the Hack machine language.
+ * In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM=0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time unit. If reset=1 then the 
+ * CPU jumps to address 0 (i.e. sets pc=0 in next time unit) rather 
+ * than to the address resulting from executing the current instruction. 
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset=1) or continue executing
+                         // the current program (reset=0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write into M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    
+    Mux(a = true, b = false, sel = instruction[15], out = aInstruct);
+
+    Mux16(a = outALU, b = instruction, sel = aInstruct, out = inAREG);
+    
+    Mux(a = instruction[5], b = true, sel = aInstruct, out = aLOAD);
+
+    ARegister(in = inAREG, load= aLOAD, out= outAREG, out[0..14] = addressM); 
+   
+
+    Mux(a = instruction[4], b = false, sel = aInstruct, out = dLOAD);
+    DRegister(in = outALU, load = dLOAD, out = outDREG);
+
+    Mux16(a = outAREG, b = inM, sel = instruction[12], out = aORm);
+
+    ALU(x = outDREG, y = aORm , zx = instruction[11], nx = instruction[10],
+                   zy = instruction[9], ny = instruction[8],
+                   f =  instruction[7],  no = instruction[6], out = outALU,
+                   ng = j1, zr = j2);
+
+    Mux(a = instruction[3], b = false, sel = aInstruct, out = outMux);
+    Mux(a = false, b = true, sel = outMux, out = writeM);
+    Mux16(a = false, b = outALU, sel = outMux, out = outM);
+    
+    //Jumping
+    //
+    // 0 1 0  JEQ
+    // 1 0 0  JLT
+    // 
+    // 0 1 1  JGE
+    // 1 0 1  JNE
+    //
+    // 0 0 1  JGT
+    // 1 1 0  JLE
+
+    DMux8Way(in = true, sel = instruction[0..2], 
+                                                 a = null, b = JGT, c = JEQ, d = JGE, 
+                                                 e = JLT,  f = JNE, g = JLE, h = JMP);
+
+    
+    Mux8Way(c = JEQ, e = JLT, sel[0] = false, sel[1] = j2, sel[2] = j1, out = NULLcmp);
+
+    Xor(a = j1, b = j2, out = tmp);
+    Not(in = tmp, out = j3plus);
+
+    Mux8Way(d = JGE, f = JNE, sel[0] = true, sel[1] = j2, sel[2] = j1, out = ONEcmp0);
+
+    Mux8Way(f = JNE, sel[0] = true, sel[1] = j2, sel[2] = j3plus, out = ONEcmp1);
+    
+    Mux8Way(d = JGE, sel[0] = j3plus, sel[1] = j3plus, sel[2] = false, out = ONEcmp2);
+
+
+    Or(a = ONEcmp0, b = ONEcmp1, out = ONEcmpTMP);
+    Or(a = ONEcmpTMP, b = ONEcmp2, out = ONEcmp);
+     
+    Or(a = NULLcmp, b = ONEcmp, out = outCMP1);
+
+    Not(in = j1, out = notj1);
+    Not(in = j2, out = notj2);
+    And(a = notj1, b = notj2, out = j3);
+    
+    Mux(a = JLE, b = JGT, sel = j3, out = outCMP2);
+
+
+    Or(a = outCMP1, b = outCMP2, out = outCMP);
+ 
+    
+    //PC
+    Mux(a= outCMP, b = true, sel = JMP, out = jORn1);
+    Mux(a = jORn1, b = false, sel = null, out = jORn2); 
+    
+    Mux(a = jORn2, b = false, sel = aInstruct, out = jumpORnot);
+    PC(in = outAREG, load = jumpORnot, inc = true, reset = reset, out[0..14] = pc); 
+
+}
