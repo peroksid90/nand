@@ -1,5 +1,7 @@
 #include "hvm.h"
 
+std::string name_read_file;
+
 PARS_TYPE VMparser::advance()
 {
 
@@ -69,6 +71,7 @@ COMM_TYPE VMparser::commandType()
     }
     if(in.find("return") != std::string::npos) {
         currentComType = C_RETURN;
+        
         return C_RETURN;
     } else {
         std::cerr << "Unknown command type\n";
@@ -262,6 +265,9 @@ void CodeWriter::writeArithmetic(std::string command)
                   << "M=M+1\n";
     Un++;
 }
+void CodeWriter::setBreakPoint() {
+        ofs << "@10000\n";
+}
 
 void CodeWriter::writePushPop(COMM_TYPE command, std::string segment, int index)
 {
@@ -348,7 +354,7 @@ void CodeWriter::writePushPop(COMM_TYPE command, std::string segment, int index)
             << "M=M+1\n";
 
     if(command == C_PUSH && segment == "static")
-        ofs << "@" << nameFile + "." << index << "\n"
+        ofs << "@" << name_read_file + "." << index << "\n"
             << "D=M\n"
             << "@SP\n"
             << "A=M\n"
@@ -452,31 +458,99 @@ void CodeWriter::writePushPop(COMM_TYPE command, std::string segment, int index)
              << "M=M-1\n"
              << "A=M\n"
              << "D=M\n"
-             << "@" << nameFile + "." << index << "\n"
+             << "@" << name_read_file + "." << index << "\n"
              << "M=D\n";
 }
 void CodeWriter::writeInit() {
-
+    ofs << "@261\n"
+        << "D=A\n"
+        << "@SP\n"
+        << "M=D\n"
+    //writeCall("Sys.init", "0");
+        << "@Sys.init\n" 
+        << "0;JMP\n";
 }
 void CodeWriter::writeLabel(std::string label) {
-    ofs << "(" + label + ")" << "\n";
+    ofs << "(" + name_read_file + "$" + label + ")" + "\n";
 }
 void CodeWriter::writeGoto(std::string label) {
-    ofs << "@" + label + "\n"
+    ofs << "@" + name_read_file + "$" + label + "\n"
         << "0;JMP\n";
+        std::cout << name_read_file << std::endl;
 }
 void CodeWriter::writeIf(std::string label) {
     ofs << "@SP\n"
-        << "M=M-1\n"
+        << "M=M-1\n" //из за него не срабатывает переход, но push pop завязаны на эту логику.
         << "A=M\n"
         << "D=M\n"
-        << "@" + label + "\n"
+        //Костыль
+        //<< "@SP\n"
+        //<< "M=M-1\n"
+        //й
+        << "@" + name_read_file + "$" + label + "\n"
         << "D;JGT\n";
 }
-void CodeWriter::writeCall(std::string func_name, int args_num) {
-
+void CodeWriter::writeCall(std::string func_name, std::string args_num) {
+    static int c = 0;
+      //  if(func_name.find('.') != std::string::npos)
+       // func_name.replace(func_name.find('.'), 1, "$");
+    std::stringstream ss2;
+    ss2 << c;
+    ofs << "@return_address" + ss2.str() + "\n"
+        << "D=A\n"
+        << "@SP\n"
+        << "A=M\n"
+        << "M=D\n"
+        << "@SP\n"
+        << "M=M+1\n"
+        << "@LCL\n"
+        << "D=M\n"
+        << "@SP\n"
+        << "A=M\n"
+        << "M=D\n"
+        << "@SP\n"
+        << "M=M+1\n"
+        << "@ARG\n"
+        << "D=M\n"
+        << "@SP\n"
+        << "A=M\n"
+        << "M=D\n"
+        << "@SP\n"
+        << "M=M+1\n"
+        << "@THIS\n"
+        << "D=M\n"
+        << "@SP\n"
+        << "A=M\n"
+        << "M=D\n"
+        << "@SP\n"
+        << "M=M+1\n"
+        << "@THAT\n"
+        << "D=M\n"
+        << "@SP\n"
+        << "A=M\n"
+        << "M=D\n"
+        << "@SP\n"
+        << "M=M+1\n"
+            << "@" + args_num + "\n"
+            << "D=A\n"
+            << "@SP\n"
+            << "D=M-D\n"
+            << "@5\n"
+            << "D=D-A\n"
+            << "@ARG\n"
+            << "M=D\n"
+            << "@SP\n"
+            << "D=M\n"
+            << "@LCL\n"
+            << "M=D\n"
+            << "@" + func_name + "\n"
+            << "0;JMP\n"
+            << "(return_address" + ss2.str() + ")\n";
+    c++;
 }
 void CodeWriter::writeFunction(std::string func_name, int local_num) {
+    //if(func_name.find('.') != std::string::npos)
+      //  func_name.replace(func_name.find('.'), 1, "$");
     ofs << "(" + func_name + ")" + "\n";
     int offset = 0;
   while(offset != local_num) {
@@ -490,7 +564,8 @@ void CodeWriter::writeFunction(std::string func_name, int local_num) {
 }
 void CodeWriter::writeReturn() {
         //FRAME=LCL
-    ofs << "@LCL\n"
+    ofs << "// *************** RETURN ***************\n" 
+        <<  "@LCL\n"
         << "D=M\n"
         << "@R13\n"
         << "M=D\n"
@@ -542,10 +617,9 @@ void CodeWriter::writeReturn() {
         << "A=M\n"
         << "D=M\n"
         << "@LCL\n"
-        << "M=D\n";
+        << "M=D\n"
         //goto RET
-    //ofs << "@R14\n"
-      //  << "D=M\n"
-        //<< "@D\n"
-        //<< "0;JMP\n";
+        << "@R14\n"
+        << "A=M\n"
+        << "0;JMP\n";
 }
