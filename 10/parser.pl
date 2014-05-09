@@ -1,242 +1,255 @@
+#!/usr/bin/env perl
 use strict;
+use v5.14;
+
+my @tokenzer = <>;
+shift @tokenzer;
+pop @tokenzer;
+
+Class(\@tokenzer);
 
 sub Class {
+	my $token = shift;
 	print "<class>\n";
-	print shift;			#class
-	my $className = shift;
-	print $className;		#className
-	print shift;			# {
-	$className =~ />(.*)</;
-	$className = $1;
-	while($_[0] =~ /static|field/) {	#classVarDec*
-		ClassVarDec(@_);
+	print shift @{$token};			#class
+	print shift @{$token};			#className
+	print shift @{$token};			# {
+	while(${$token}[0] =~ /static|field/) {	#classVarDec*
+		ClassVarDec($token);
 	}
-	while($_[0] =~ /(constructor|function|method)(void|int|char|boolean|$className)/) {	#subroutineDec*
-		subroutineDec(@_);
+	if(${$token}[0] =~ /(constructor|function|method)/ and ${$token}[1] =~ /(void|int|char|boolean|identifier)/) {	#subroutineDec*
+		subroutineDec($token);
 	} 
-	print shift;			# }
-	print "</class>\n";q
+	print shift @{$token};			# }
+	print "</class>\n";
 }
 
 sub ClassVarDec {
-	print "<classVarDec>\n"
-	print shift;		#static | field
-	print shift;		#type
-	print shift;		#varName
-	while($_[0] =~ /\,/) { 	#(, varName)*
-		print shift;	# ,
-		print shift;	# varName
+	my $token = shift;
+	print "<classVarDec>\n";
+	print shift @{$token};		#static | field
+	print shift @{$token};		#type
+	print shift @{$token};		#varName
+	while(${$token}[0] =~ /\,/) { 	#(, varName)*
+		print shift @{$token};	# ,
+		print shift @{$token};	# varName
 	}
-	print shift;		# ;
+	print shift @{$token};		# ;
 	print "</classVarDec>\n";
 }
 
 sub subroutineDec {
+	my $token = shift;
 	print "<subroutineDec>\n";
-	print shift;		#constructor|function|method
-	print shift;		#void|type
-	print shift;		#subroutineName
-	print shift;		#(
-	print shift;		#parameterList
-	print shift;		#)
-	subroutineBody(@_);	#subroutineBody
+	print shift @{$token};		#constructor|function|method
+	print shift @{$token};		#void|type
+	print shift @{$token};		#subroutineName
+	print shift @{$token};		#(
+	parameterList($token);	#parameterList
+	print shift @{$token};		#)
+	subroutineBody($token);	#subroutineBody
 	print "</subroutineDec>\n";
 }
 
-sub varDec {
-	print "<varDec>\n";
-	print shift;		# var
-	print shift;		# type
-	print shift;		# varName
-	while($_[0] =~ /,/) {
-		print shift;	# ,
-		print shift;	# varName
-	}
-	print shift;		# ;
-	print "</varDec>\n";
-}
-
-sub subroutineBody {
-	print shift;		# {
-	while($_[0] ~= /var/) { # varDec*
-		varDec(@_);
-	}	
-	parseStetment(@_);	# statements
-	print shift;		# }
-}
-
 sub parameterList {
+	my $token = shift;
 	print "<parameterList>\n";
-	if($_[0] =~ /int|char|boolean|identifier/) {
-		print shift;		# type
-		print shift;		# varName
-		while($_[0] =~ /,/) {
-			print shift;	# ,
-			print shift;	# type
-			print shift;	# varName
+	if(${$token}[0] =~ /int|char|boolean|identifier/) {
+		print shift @{$token};		# type
+		print shift @{$token};		# varName
+		while(${$token}[0] =~ /\,/) {
+			print shift @{$token};	# ,
+			print shift @{$token};	# type
+			print shift @{$token};	# varName
 		}
 	}
 	print "</parameterList>\n";
 }
 
-##############!!!!!!!!!!!!!!!!!!!!
+
 sub subroutineBody {
+	my $token = shift;
 	print "<subroutineBody>\n";
-	print shift;			# {
-	while($_[0] =~ /var/) {		#varDec*
-		print shift;		#var
-		print shift;		#type
-		print shift;		#varName
-		while($_[0] =~ /\,/) {	#(, varName)*
-			print shift;	# ,
-			print shift;	#varName
-		}
-		print shift;	# ;
-	}
-	parseStatement(@_);
-	print shift;	# }
+	print shift @{$token};		# {
+	while(${$token}[0] =~ /var/) { # varDec*
+		varDec($token);
+	}	
+	parseStatement($token);	# statements
+	print shift @{$token};		# }
 	print "</subroutineBody>\n";
 }
 
+sub varDec {
+	my $token = shift;
+	print "<varDec>\n";
+	print shift @{$token};		# var
+	print shift @{$token};		# type
+	print shift @{$token};		# varName
+	while(${$token}[0] =~ /,/) {
+		print shift @{$token};	# ,
+		print shift @{$token};	# varName
+	}
+	print shift @{$token};		# ;
+	print "</varDec>\n";
+}
+
 sub parseStatement {
-	print "<statements>\n";
-	if($_[0] =~ /let/) {
-		letStatement(@_);
+	my $token = shift;
+	while(${$token}[0] =~ /let|if|while|do|return/) {
+		print "<statements>\n";
+		given(${$token}[0]) {
+			when(/let/) {
+				letStatement($token);
+			}
+			when(/if/) {
+				ifStatement($token);
+			}
+			when(/while/) {
+				whileStatement($token);
+			}
+			when(/do/) {
+				doStatement($token);
+			}
+			when(/return/) {
+				returnStatement($token);
+			}
+		}
+		print "</statements>\n";
 	}
-	if($_[0] =~ /if/) {
-		ifStatement(@_);
-	}
-	if($_[0] =~ /while/) {
-		whileStatement(@_);
-	}
-	if($_[0] =~ /do/) {
-		doStatement(@_);
-	}
-	if($_[0] =~ /return/) {
-		returnStatement(@_);
-	}
-	print "</statements>\n";
 }
 
 sub letStatement {
+	my $token = shift;
 	print "<letStatement>\n";
-	print shift;				#let
-	print shift;				#varName
-		if($_[0] =~ /\[/) {
-			print shift;		# [
-			parseExpression(@_);
-			print shift;		# ]
+	print shift @{$token};				#let
+	print shift @{$token};				#varName
+		if(${$token}[0] =~ /\[/) {
+			print shift @{$token};		# [
+			parseExpression($token);
+			print shift @{$token};		# ]
 		}
-	print shift;				# =
-	parseExpression(@_);
-	print shift;				# ;
+	print shift @{$token};				# =
+	parseExpression($token);
+	print shift @{$token};				# ;
 	print "</letStatement>\n";
 }
 
 sub ifStatement {
+	my $token = shift;
 	print "<ifStatement>\n";
-	print shift;				#if
-	print shift;				# (
-	parseExpression(@_);			# expression
-	print shift;				# )
-	print shift;				# {
-	parseStatement(@_);			# statements
+	print shift @{$token};				#if
+	print shift @{$token};				# (
+	parseExpression($token);			# expression
+	print shift @{$token};				# )
+	print shift @{$token};				# {
+	parseStatement($token);			# statements
 	print shift;				# }
-	if($_[0] =~ /else/) {
-		print shift;			# else
-		print shift;			# {
-		parseStatement(@_);		# statements
-		print shift;			# }
+	if(${$token}[0] =~ /else/) {
+		print shift @{$token};			# else
+		print shift @{$token};			# {
+		parseStatement($token);		# statements
+		print shift @{$token};			# }
 	}
 	print "</ifStatement>\n";
 }
 
 sub whileStatement {
+	my $token = shift;
 	print "<whileStatement>\n";
-	print shift;				#while
-	print shift;				# (
-	parseExpression(@_);			# expression
-	print shift;				# )
-	print shift;				# {
-	parseExpression(@_);			# expression
-	print shift;				# }
+	print shift @{$token};				#while
+	print shift @{$token};				# (
+	parseExpression($token);			# expression
+	print shift @{$token};				# )
+	print shift @{$token};				# {
+	parseStatements($token);			# statements
+	print shift @{$token};				# }
 	print "</whileStatement>\n";
 }
 
 sub doStatement {
+	my $token = shift;
 	print "<doStatement>\n";
-	print shift;				# do
-	subroutineCall(@_);			# subroutineCall
+	print shift @{$token};				# do
+	subroutineCall($token);			# subroutineCall
 	print "<doStatement>\n";
 }
 
 sub ReturnStatement {
+	my $token = shift;
 	print "<ReturnStatement>\n";
-	print shift;				# return
-	parseExpression(@_);			# expression?
+	print shift @{$token};				# return
+	parseExpression($token);			# expression?
 	print "</ReturnStatement>\n";
 }
 
 sub parseExpression {
-	print "<expression>\n";
-	parseTerm(@_);
-	while($_[0] =~ /\+|\-|\*|\/|\&|\||\<|\>|\=/) {	#(op term)*
-		print shift;				#op
-		parseTerm(@_);		
+	my $token = shift;
+	if( (${$token}[0] =~ /integerConstant|stringConstant|true|false|null|this/) or (${$token}[0] =~ /identifier/ and ${$token}[0] =~ /\[/) 
+	or (${$token}[0] =~ /identifier/ and ${$token}[1] !~ /\(/) or (${$token}[0] =~ /identifier/ and ${$token}[1] =~ /\(/) 
+	or (${$token}[0] =~ /\(/) or (${$token}[0] =~ /\-|\-/) ) {
+		print "<expression>\n";
+		parseTerm($token);
+		while(${$token}[0] =~ /\+|\-|\*|\/|\&|\||\<|\>|\=/) {	#(op term)*
+			print shift @{$token} . "!!!!!!!!!!!!!!!\n";				#op
+			parseTerm($token);		
+		}
+		print "</expression>\n";
 	}
-	print "</expression>\n";
 }
 
 sub expressionList {
+	my $token = shift;
 	print "<expressionList>\n";
-	parseExpression(@_);
-	while($_[0] =~ /\,/) {
-		parseExpression(@_);
+	parseExpression($token);
+	while(${$token}[0] =~ /\,/) {
+		parseExpression($token);
 	}
 	print "</expressionList>\n";
 }
 
 sub subroutineCall {
-	print "<subroutineCall>\n";
-	if($_[0] =~ /identifier/ and $_[1] =~ /\(/ ) {
-		print shift;	#subroutineName
-		print shift;	# (
-		expressionList(@_);
-		print shift;	# )
+	my $token = shift;
+	#print "<subroutineCall>\n";
+	if(${$token}[0] =~ /identifier/ and ${$token}[1] =~ /\(/ ) {
+		print shift @{$token};	#subroutineName
+		print shift @{$token};	# (
+		expressionList($token);
+		print shift @{$token};	# )
 	} else {
-		print shift;	#className | varName
-		print shift;	# .
-		print shift;	#subroutineName
-		print shift;	# (
-		expressionList(@_);
-		print shift;	# )
+		print shift @{$token};	#className | varName
+		print shift @{$token};	# .
+		print shift @{$token};	#subroutineName
+		print shift @{$token};	# (
+		expressionList($token);
+		print shift @{$token};	# )
 	}
-	print "</subroutineCall>\n";
+	#print "</subroutineCall>\n";
 }
 
 sub parseTerm {
+	my $token = shift;
 	print "<term>\n";
-	if($_[0] =~ /integerConstant|stringConstant|true|false|null|this/ ) {
-		print shift;
+	if(${$token}[0] =~ /integerConstant|stringConstant|true|false|null|this/ ) {
+		print shift @{$token};
 	}
-	if($_[0] =~ /identifier/ and $_[1] =~ /\[/) {
-		print shift;		#varName
-		print shift;		# [
-		parseExpression(@_);	# expression
-		print shift;		# ]
+	if(${$token}[0] =~ /identifier/ and ${$token}[1] =~ /\[/) {
+		print shift @{$token};		#varName
+		print shift @{$token};		# [
+		parseExpression($token);	# expression
+		print shift @{$token};		# ]
 	}
-	if($_[0] =~ /identifier/ and $_[1] !~ /\(/) {
-		print shift;		#varName
+	if(${$token}[0] =~ /identifier/ and ${$token}[1] !~ /\(/) {
+		print shift @{$token};		#varName
 	}
-	if($_[0] =~ /identifier/ and $_[1] =~ /\(/) {
-		subroutineCall(@_);	
+	if(${$token}[0] =~ /identifier/ and ${$token}[1] =~ /\(/) {
+		subroutineCall($token);	
 	}
-	if($_[0] =~ /\(/) {
-		parseExpression(@_);	#(expression)
+	if(${$token}[0] =~ /\(/) {
+		parseExpression($token);	#(expression)
 	}
-	if($_[0] =~ /\-|\-/) {
-		print shift;		#unaryOp -|-
-		parseTerm(@_);		#term
+	if(${$token}[0] =~ /\-|\-/) {
+		print shift @{$token};		#unaryOp -|-
+		parseTerm($token);		#term
 	}
 	print "</term>\n";
 }
